@@ -25,7 +25,6 @@ data "ncloud_access_control_group" "test" {
 }
 
 
-
 # resource "ncloud_subnet" "test" {
 #   vpc_no         = ncloud_vpc.test.vpc_no
 #   subnet         = cidrsubnet(ncloud_vpc.test.ipv4_cidr_block, 8, 1)
@@ -103,7 +102,6 @@ resource "ncloud_server" "server" {
 resource "ncloud_public_ip" "public_ip" {
   for_each = var.server
   server_instance_no = ncloud_server.server[each.key].id
-
   depends_on = [ncloud_server.server]
 }
 
