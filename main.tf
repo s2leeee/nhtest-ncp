@@ -24,50 +24,35 @@ data "ncloud_access_control_group" "test" {
   vpc_no = data.ncloud_vpc.test.vpc_no
 }
 
-
-# resource "ncloud_subnet" "test" {
-#   vpc_no         = ncloud_vpc.test.vpc_no
-#   subnet         = cidrsubnet(ncloud_vpc.test.ipv4_cidr_block, 8, 1)
-#   zone           = "KR-1"
-#   network_acl_no = ncloud_vpc.test.default_network_acl_no
-#   subnet_type    = "PUBLIC"
-#   usage_type     = "GEN"
-# }
-
-# resource "ncloud_server" "server" {
-#   subnet_no                 = ncloud_subnet.test.id
-#   name                      = "my-tf-server-1"
-#   server_image_product_code = "SW.VSVR.OS.LNX64.UBNTU.SVR1604.B050"
-#   login_key_name            = ncloud_login_key.loginkey.key_name
-# }
-
 data "ncloud_server_image" "server_image" {
+  for_each = var.server
   filter {
     name = "product_name"
-    values = ["centos-7.3-64"]
+    values = [each.value.os_version]
   }
 }
 
 data "ncloud_server_product" "product" {
-  server_image_product_code = data.ncloud_server_image.server_image.id
+  for_each = var.server
+  server_image_product_code = data.ncloud_server_image.server_image[each.key].id
 
   filter {
     name = "product_code"
-    values = ["HDD"]
+    values = [each.value.product_code]
     regex = true
   }
   filter {
     name = "cpu_count"
-    values = ["2"]
+    values = [each.value.cpu_count]
   }
   filter {
     name = "memory_size"
-    values = ["4GB"]
+    values = [each.value.memory_size]
   }
   filter {
     name = "product_type"
-    values = ["HICPU"]
-    /* Server Spec Type  STAND
+    values = [each.value.product_type]
+    /* Server Spec Type
     STAND
     HICPU
     HIMEM
@@ -77,26 +62,15 @@ data "ncloud_server_product" "product" {
 
 resource "ncloud_server" "server" {
   for_each = var.server
-#   vpc_no = data.ncloud_vpc.test.vpc_no
+  # vpc_no = data.ncloud_vpc.test.vpc_no
   subnet_no = data.ncloud_subnet.test.id
   name = each.value.server_name
   login_key_name = each.value.login_key_name
   
-  server_image_product_code = data.ncloud_server_image.server_image.id //"SPSW0LINUX000139"
-  server_product_code = data.ncloud_server_product.product.id
-
+  server_image_product_code = data.ncloud_server_image.server_image[each.key].id
+  server_product_code = data.ncloud_server_product.product[each.key].id
+  # server_image_product_code = "SPSW0LINUX000139"
   # server_product_code = "SPSVRSTAND000004"
-  # login_key_name            = ncloud_login_key.loginkey.key_name
-
-#     tag_list {
-#       tag_key = "samplekey1"
-#       tag_value = "samplevalue1"
-#     }
-
-#     tag_list {
-#       tag_key = "samplekey2"
-#       tag_value = "samplevalue2"
-#     }
 }
 
 resource "ncloud_public_ip" "public_ip" {
@@ -110,7 +84,7 @@ resource "ncloud_block_storage" "storage" {
   server_instance_no = ncloud_server.server[each.value.server_key].id
   name = each.value.storage_name
   size = each.value.disk_size
-  stop_instance_before_detaching = "false"
+  stop_instance_before_detaching = "true"	
   # description = "${ncloud_server.server[each.value.server_key] - }"
   depends_on = [ncloud_server.server]
 }
