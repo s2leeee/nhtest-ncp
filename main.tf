@@ -62,12 +62,12 @@ data "ncloud_server_product" "product" {
   }
   filter {
     name = "memory_size"
-    values = ["8GB"]
+    values = ["4GB"]
   }
   filter {
     name = "product_type"
-    values = ["STAND"]
-    /* Server Spec Type
+    values = ["HICPU"]
+    /* Server Spec Type  STAND
     STAND
     HICPU
     HIMEM
