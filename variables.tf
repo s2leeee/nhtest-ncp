@@ -8,6 +8,11 @@ variable "subnet_id" {}
 variable "server" {
     type = map(object({
         server_name = string
+        os_version = string   // Image Name
+        product_code = string
+        cpu_count = string
+        memory_size = string
+        product_type = string
         login_key_name = string
         acg_name    = string
         //server_image_product_code = string
