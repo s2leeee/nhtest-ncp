@@ -4,6 +4,8 @@ variable "secret_key" {}
 variable "vpc_name" {}
 variable "subnet_id" {}
 
+variable "acg_name" {}
+
 variable "server" {
     type = map(object({
         server_name = string
@@ -46,7 +48,7 @@ variable "subnet_name" {}
 variable "subnet_usage_type" {}
 
 // acg 생성
-variable "acg_name" {}          // variable "server" -> acg_name 주석처리
+variable "acg_new_name" {}          // variable "server" -> acg_name 주석처리
 variable "acg_inbound_rule"{
     type = map(object({
         protocol = string
