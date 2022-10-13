@@ -54,7 +54,7 @@ data "ncloud_access_control_group" "test" {
 
 resource "ncloud_access_control_group" "acg" {
   count = var.is_portal_acg == false ? 1 : 0
-  name = var.acg_name
+  name = var.acg_new_name
   vpc_no = var.is_portal_vpc == false ? ncloud_vpc.vpc[0].id : data.ncloud_vpc.test[0].id
 }
 
