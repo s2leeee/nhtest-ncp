@@ -86,7 +86,7 @@ resource "ncloud_network_interface" "nic" {
     for_each = var.server
     name = "${each.value.server_name}-nic"
     subnet_no = var.is_portal_subnet == false ? ncloud_subnet.subnet[0].id :  data.ncloud_subnet.test[0].id
-    access_control_groups = var.is_portal_acg == false ?  [ncloud_vpc.vpc.default_access_control_group_no, ncloud_access_control_group.acg[0].id] : [data.ncloud_access_control_group.test[0].id]
+    access_control_groups = var.is_portal_acg == false ?  [ncloud_vpc.vpc[0].default_access_control_group_no, ncloud_access_control_group.acg[0].id] : [data.ncloud_access_control_group.test[0].id]
 }
 
 data "ncloud_server_image" "server_image" {
