@@ -8,21 +8,80 @@
 
 # vpc portal에서 가져오기
 data "ncloud_vpc" "test" {
+  count = var.is_portal_vpc == false ? 0 : 1
   name = var.vpc_name
 }
 
-# subnet portal에서 가져오기
-data "ncloud_subnet" "test" {
-  id = var.subnet_id
-  vpc_no = data.ncloud_vpc.test.vpc_no
+resource "ncloud_vpc" "vpc" {
+  count = var.is_portal_vpc == false ? 1 : 0
+  name = var.vpc_name
+  ipv4_cidr_block = var.vpc_ipv4_cidr_block
 }
 
+# resource "ncloud_network_acl" "nacl" {
+#   count = var.is_portal_vpc == false ? 1 : 0
+#   vpc_no = ncloud_vpc.vpc[0].id
+#   name = var.network_acl_name
+#   //description  = 
+# }
+
 # subnet portal에서 가져오기
-data "ncloud_access_control_group" "test" {
-  for_each = var.server
-  name = each.value.acg_name
-  vpc_no = data.ncloud_vpc.test.vpc_no
+data "ncloud_subnet" "test" {
+  count = var.is_portal_subnet == false ? 0 : 1
+  id = var.subnet_id
+  vpc_no = data.ncloud_vpc.test[0].vpc_no
 }
+
+resource "ncloud_subnet" "subnet" {
+  count = var.is_portal_subnet == false ? 1 : 0
+  vpc_no = ncloud_vpc.vpc[0].id
+  subnet = var.subnet
+  zone = var.zone
+  network_acl_no = var.is_portal_vpc == false ? ncloud_vpc.vpc[0].default_network_acl_no : data.ncloud_vpc.test[0].default_network_acl_no
+  subnet_type = var.subnet_typ // PUBLIC(Public) | PRIVATE(Private)
+  name = var.subnet_name
+  usage_type = var.subnet_usage_type               // GEN(General) | LOADB(For load balancer)
+}
+
+
+# acg portal에서 가져오기
+data "ncloud_access_control_group" "test" {
+  //for_each = var.server
+  count = var.is_portal_acg == false ? 0 : 1
+  name = var.acg_name //each.value.acg_name
+  vpc_no = var.is_portal_vpc == false ? ncloud_vpc.vpc[0].vpc_no : data.ncloud_vpc.test[0].vpc_no
+}
+
+resource "ncloud_access_control_group" "acg" {
+  count = var.is_portal_acg == false ? 1 : 0
+  name = var.acg_name
+  vpc_no = var.is_portal_vpc == false ? ncloud_vpc.vpc[0].id : data.ncloud_vpc.test[0].id
+}
+
+resource "ncloud_access_control_group_rule" "acg-rule" {
+  count = var.is_portal_acg == false ? 1 : 0
+  access_control_group_no = ncloud_access_control_group.acg[0].id
+
+  dynamic "inboud" {
+    for_each = var.acg_inbound_rule
+    content {
+      protocol    = each.value.protocol       // TCP | UDP | ICMP
+      ip_block    = each.value.ip_block
+      port_range  = each.value.port_range
+      //description = each.value.description
+    }
+  }
+  dynamic "outbound" {
+    for_each = var.acg_outbound_rule
+    content {
+      protocol    = each.value.protocol
+      ip_block    = each.value.ip_block
+      port_range  = each.value.port_range
+      //description = each.value.description
+    }
+  }
+}
+
 
 data "ncloud_server_image" "server_image" {
   for_each = var.server
@@ -63,7 +122,7 @@ data "ncloud_server_product" "product" {
 resource "ncloud_server" "server" {
   for_each = var.server
   # vpc_no = data.ncloud_vpc.test.vpc_no
-  subnet_no = data.ncloud_subnet.test.id
+  subnet_no = var.is_portal_subnet == false ? ncloud_subnet.subnet[0].id :  data.ncloud_subnet.test[0].id
   name = each.value.server_name
   login_key_name = each.value.login_key_name
   
