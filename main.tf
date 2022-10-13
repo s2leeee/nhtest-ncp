@@ -87,6 +87,7 @@ resource "ncloud_network_interface" "nic" {
     name = "${each.value.server_name}-nic"
     subnet_no = var.is_portal_subnet == false ? ncloud_subnet.subnet[0].id :  data.ncloud_subnet.test[0].id
     access_control_groups = var.is_portal_acg == false ?  [ncloud_vpc.vpc[0].default_access_control_group_no, ncloud_access_control_group.acg[0].id] : [data.ncloud_access_control_group.test[0].id]
+    // acg를 새로 생성하는 경우, vpc 생성 시 디폴트로 생성된 acg와 새로 생성한 acg 할당
 }
 
 data "ncloud_server_image" "server_image" {
