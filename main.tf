@@ -62,7 +62,7 @@ resource "ncloud_access_control_group_rule" "acg-rule" {
   count = var.is_portal_acg == false ? 1 : 0
   access_control_group_no = ncloud_access_control_group.acg[0].id
 
-  dynamic "inboud" {
+  dynamic "inbound" {
     for_each = var.acg_inbound_rule
     content {
       protocol    = each.value.protocol       // TCP | UDP | ICMP
