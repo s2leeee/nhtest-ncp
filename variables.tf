@@ -55,17 +55,35 @@ variable "subnet_usage_type" {}
 
 // acg 생성
 variable "acg_new_name" {}          // variable "server" -> acg_name 주석처리
+
+
+# variable "acg_inbound_rule"{
+#     type = map(object({
+#         protocol = string
+#         ip_block = string
+#         port_range = string
+#     }))
+# }
+# variable "acg_outbound_rule"{
+#     type = map(object({
+#         protocol = string
+#         ip_block = string
+#         port_range = string
+#     }))
+# }
+
 variable "acg_inbound_rule"{
-    type = map(object({
+    type = list(object({
         protocol = string
         ip_block = string
         port_range = string
     }))
 }
 variable "acg_outbound_rule"{
-    type = map(object({
+    type = list(object({
         protocol = string
         ip_block = string
         port_range = string
     }))
 }
+
