@@ -14,7 +14,7 @@ data "ncloud_vpc" "test" {
 
 resource "ncloud_vpc" "vpc" {
   count = var.is_portal_vpc == false ? 1 : 0
-  name = var.vpc_name
+  name = var.vpc_new_name
   ipv4_cidr_block = var.vpc_ipv4_cidr_block
 }
 
