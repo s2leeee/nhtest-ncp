@@ -34,6 +34,7 @@ variable "is_portal_subnet" {}
 variable "is_portal_acg" {}
 
 // vpc, network_acl 생성
+variable "vpc_new_name" {}
 variable "vpc_ipv4_cidr_block" {}
 # variable "network_acl_name" {}
 
