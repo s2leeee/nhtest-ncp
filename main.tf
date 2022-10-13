@@ -38,7 +38,7 @@ resource "ncloud_subnet" "subnet" {
   subnet = var.subnet
   zone = var.zone
   network_acl_no = var.is_portal_vpc == false ? ncloud_vpc.vpc[0].default_network_acl_no : data.ncloud_vpc.test[0].default_network_acl_no
-  subnet_type = var.subnet_typ // PUBLIC(Public) | PRIVATE(Private)
+  subnet_type = var.subnet_type // PUBLIC(Public) | PRIVATE(Private)
   name = var.subnet_name
   usage_type = var.subnet_usage_type               // GEN(General) | LOADB(For load balancer)
 }
