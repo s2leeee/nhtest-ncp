@@ -31,9 +31,15 @@ variable "server_storage" {
 
 
 // 내용 추가
-variable "is_portal_vpc" {}
-variable "is_portal_subnet" {}
-variable "is_portal_acg" {}
+variable "is_portal_vpc" {
+    type = bool
+}
+variable "is_portal_subnet" {
+    type = bool
+}
+variable "is_portal_acg" {
+    type = bool
+}
 
 // vpc, network_acl 생성
 variable "vpc_new_name" {}
