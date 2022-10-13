@@ -63,21 +63,29 @@ resource "ncloud_access_control_group_rule" "acg-rule" {
   access_control_group_no = ncloud_access_control_group.acg[0].id
 
   dynamic "inbound" {
-    for_each = var.acg_inbound_rule
+    for_each = [ for rule in var.acg_inbound_rule : {
+      protocol = rule.protocol
+      ip_block = rule.ip_block
+      port_range = rule.port_range
+    }]
     content {
-      protocol    = each.value.protocol       // TCP | UDP | ICMP
-      ip_block    = each.value.ip_block
-      port_range  = each.value.port_range
-      //description = each.value.description
+      protocol    = rule.value.protocol       // TCP | UDP | ICMP
+      ip_block    = rule.value.ip_block
+      port_range  = rule.value.port_range
+      //description = rule.value.description
     }
   }
   dynamic "outbound" {
-    for_each = var.acg_outbound_rule
+    for_each = [ for rule in var.acg_outbound_rule : {
+      protocol = rule.protocol
+      ip_block = rule.ip_block
+      port_range = rule.port_range
+    }]
     content {
-      protocol    = each.value.protocol
-      ip_block    = each.value.ip_block
-      port_range  = each.value.port_range
-      //description = each.value.description
+      protocol    = rule.value.protocol       // TCP | UDP | ICMP
+      ip_block    = rule.value.ip_block
+      port_range  = rule.value.port_range
+      //description = rule.value.description
     }
   }
 }
