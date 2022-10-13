@@ -64,9 +64,9 @@ resource "ncloud_access_control_group_rule" "acg-rule" {
 
   dynamic "inbound" {
     for_each = [ for rule in var.acg_inbound_rule : {
-      protocol = rule.protocol
-      ip_block = rule.ip_block
-      port_range = rule.port_range
+      protocol = acg_inbound_rule.protocol
+      ip_block = acg_inbound_rule.ip_block
+      port_range = acg_inbound_rule.port_range
     }]
     content {
       protocol    = rule.value.protocol       // TCP | UDP | ICMP
@@ -77,9 +77,9 @@ resource "ncloud_access_control_group_rule" "acg-rule" {
   }
   dynamic "outbound" {
     for_each = [ for rule in var.acg_outbound_rule : {
-      protocol = rule.protocol
-      ip_block = rule.ip_block
-      port_range = rule.port_range
+      protocol = acg_outbound_rule.protocol
+      ip_block = acg_outbound_rule.ip_block
+      port_range = acg_outbound_rule.port_range
     }]
     content {
       protocol    = rule.value.protocol       // TCP | UDP | ICMP
