@@ -157,5 +157,5 @@ resource "ncloud_block_storage" "storage" {
   size = each.value.disk_size
   stop_instance_before_detaching = "true"	//
   # description = "${ncloud_server.server[each.value.server_key] - }"
-  depends_on = [ncloud_server.server]
+  #depends_on = [ncloud_server.server]
 }
